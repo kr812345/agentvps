@@ -1,0 +1,49 @@
+{
+  "name": "agentvps",
+  "version": "1.0.0",
+  "description": "Zero-touch 1-click 24/7 Remote AI Agent VPS Provisioner & MCP Server",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "agentvps": "./dist/bin/agentvps.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/bin/agentvps.js",
+    "dev": "tsx src/bin/agentvps.ts",
+    "mcp": "tsx src/bin/mcp-server.ts",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "ai-agent",
+    "vps",
+    "autonomous-agent",
+    "claude-code",
+    "antigravity-cli",
+    "aider",
+    "hetzner",
+    "digitalocean"
+  ],
+  "author": "Antigravity Team",
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^1.7.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "commander": "^15.0.0",
+    "dotenv": "^17.4.2",
+    "picocolors": "^1.1.1",
+    "ssh2": "^1.17.0",
+    "yaml": "^2.9.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@types/ssh2": "^1.15.6",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}
