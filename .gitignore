@@ -4,6 +4,9 @@ package-lock.json.bak
 
 # Production Build
 dist/
+.next/
+web/.next/
+web/node_modules/
 
 # Environment and secrets
 .env
