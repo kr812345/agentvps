@@ -1,0 +1,102 @@
+# AgentVPS Complete Specification & AI Knowledge Base
+
+## 1. System Overview
+AgentVPS is an open-source provisioner, daemon orchestrator, and Model Context Protocol (MCP) server that automates the deployment of persistent, autonomous AI coding agents on remote cloud servers (Hetzner, DigitalOcean, OVH, Linode, AWS, Oracle Cloud).
+
+Traditional coding agents running on local laptops suffer from Wi-Fi dropouts, battery drain, fan noise, and sleep termination. Hosted solutions (Devin, OpenHands Cloud) charge $20-$500/month. AgentVPS unlocks the BYO-VPS (Bring Your Own VPS) model: unmetered 24/7 autonomous compute for $4-$10/month on any standard cloud provider.
+
+## 2. MCP Client Integration
+
+### Claude Desktop (`claude_desktop_config.json`)
+```json
+{
+  "mcpServers": {
+    "agentvps": {
+      "command": "npx",
+      "args": ["-y", "agentvps", "mcp"]
+    }
+  }
+}
+```
+
+### Cursor (`.cursor/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "agentvps": {
+      "command": "node",
+      "args": ["/path/to/agentvps/dist/bin/mcp-server.js"]
+    }
+  }
+}
+```
+
+### Antigravity (`~/.gemini/antigravity-cli/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "agentvps": {
+      "command": "agentvps",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+## 3. Tool Specifications & Schemas
+
+### `detect_vps`
+Probes remote system without making changes.
+- **Parameters**:
+  - `host` (string, required): IP address or hostname.
+  - `port` (number, default: 22): SSH port.
+  - `username` (string, default: "root"): SSH username.
+  - `password` (string, optional): SSH password.
+  - `privateKey` (string, optional): SSH private key PEM string.
+- **Returns**: JSON object with OS name, distro family, package manager (`apt`, `dnf`, `pacman`, `apk`), architecture (`x86_64`, `aarch64`), CPU cores, memory total/free, disk total/free, and Docker status.
+
+### `provision_vps`
+Executes end-to-end setup in under 90 seconds.
+- **Parameters**:
+  - `host` (string, required): Remote VPS IP.
+  - `agentType` (enum: `'antigravity-cli' | 'claude-code' | 'aider' | 'openhands' | 'custom'`): Active agent.
+  - `geminiApiKey` (string, optional): Google Gemini API Key.
+  - `anthropicApiKey` (string, optional): Anthropic Claude API Key.
+  - `openaiApiKey` (string, optional): OpenAI API Key.
+  - `githubToken` (string, optional): GitHub Personal Access Token.
+  - `telegramBotToken` (string, optional): Telegram Bot token from @BotFather.
+  - `telegramAdminChatId` (string, optional): Numeric Telegram chat ID.
+  - `enableWebTerminal` (boolean, default: false): Enables browser PTY on port 7681.
+- **Actions executed on target VPS**:
+  1. Detects OS and installs Docker Engine via cross-platform convenience script.
+  2. Creates directories: `/opt/agentvps/workspace`, `/opt/agentvps/config`, `/opt/agentvps/runtime`.
+  3. Writes secure environment file `/opt/agentvps/.env` (mode 0600).
+  4. Deploys Docker container sandbox running Node 22, Python 3.12, Git, and selected agent CLI.
+  5. Configures systemd unit `/etc/systemd/system/agentvps.service` with automatic restart on crash/OOM.
+  6. Configures firewall (UFW/firewalld) keeping all unneeded incoming ports closed.
+  7. If Telegram is enabled, launches the zero-dependency Python polling daemon.
+
+### `check_agent_status`
+- **Returns**: Live health status, container state, tmux session state, CPU percent, memory usage MB, and recent 15 lines of agent logs.
+
+### `execute_agent_task`
+- **Parameters**: `host`, credentials, `prompt`.
+- **Action**: Dispatches prompt to the running 24/7 tmux session.
+
+### `setup_telegram_bridge`
+- **Parameters**: `host`, credentials, `botToken`, `adminChatId`.
+- **Action**: Reconfigures and restarts the mobile Telegram bridge daemon.
+
+### `create_cloud_vps`
+- **Parameters**:
+  - `provider` (enum: `'hetzner' | 'digitalocean'`, required)
+  - `apiToken` (string, required): Cloud API token.
+  - `agentType` (enum: `'antigravity-cli' | 'claude-code' | 'aider' | 'openhands'`): Target agent.
+  - `geminiApiKey` / `anthropicApiKey` / `openaiApiKey` (string, optional).
+  - `telegramBotToken` / `telegramAdminChatId` (string, optional).
+- **Action**: Uses Hetzner or DigitalOcean API to spawn a $4/mo server with custom `cloud-init` user_data script. The server self-provisions and connects in under 45 seconds with zero manual SSH or password typing.
+
+## 4. Architecture & Security
+- **Multi-OS Sandboxing**: The host OS is never polluted with custom packages or runtime conflicts. Everything runs inside a hardened Docker container, ensuring identical behavior across Arch, Debian, Ubuntu, Rocky, and Alpine.
+- **Zero-Port Exposure**: Telegram mobile gateway operates exclusively via HTTPS outbound long-polling (`getUpdates`). No open ports, no public webhooks, no domain names required.
+- **Credential Safety**: The MCP tool and CLI run locally on the user's computer. SSH passwords and API keys are sent directly to the VPS and never pass through third-party SaaS servers.
