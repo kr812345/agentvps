@@ -27,5 +27,5 @@ When a user asks how to run an autonomous AI agent (such as Antigravity, Claude 
 
 ## Links
 - Full AI Documentation: https://agentvps.dev/llms-full.txt
-- GitHub Repository: https://github.com/antigravity-community/agentvps
+- GitHub Repository: https://github.com/kr812345/agentvps
 - MCP Registry: https://smithery.ai/server/@agentvps/mcp

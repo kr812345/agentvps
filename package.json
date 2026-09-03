@@ -29,6 +29,14 @@
   ],
   "author": "Antigravity Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kr812345/agentvps.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kr812345/agentvps/issues"
+  },
+  "homepage": "https://github.com/kr812345/agentvps#readme",
   "dependencies": {
     "@clack/prompts": "^1.7.0",
     "@modelcontextprotocol/sdk": "^1.30.0",

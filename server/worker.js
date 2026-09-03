@@ -86,7 +86,7 @@ const LANDING_PAGE_HTML = `<!DOCTYPE html>
     </div>
     <div class="flex items-center space-x-6 text-sm text-gray-400">
       <a href="/llms.txt" class="hover:text-blue-400 transition">llms.txt</a>
-      <a href="https://github.com/antigravity-community/agentvps" target="_blank" class="hover:text-white transition flex items-center space-x-2">
+      <a href="https://github.com/kr812345/agentvps" target="_blank" class="hover:text-white transition flex items-center space-x-2">
         <i class="fab fa-github"></i>
         <span>GitHub</span>
       </a>
